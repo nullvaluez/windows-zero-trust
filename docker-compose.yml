@@ -1,0 +1,41 @@
+version: '3'
+services:
+  internal_service:
+    build: ./internal_service
+    networks:
+      - internal_net
+    environment:
+      - FLASK_ENV=development
+
+  dmz_service:
+    build: ./dmz_service
+    networks:
+      - dmz_net
+    environment:
+      - FLASK_ENV=development
+
+  external_service:
+    build: ./external_service
+    networks:
+      - external_net
+    environment:
+      - FLASK_ENV=development
+
+  oauth2_server:
+    build: ./oauth2_server
+    networks:
+      - internal_net
+      - dmz_net
+
+  fluentd:
+    image: fluent/fluentd
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    volumes:
+      - ./fluentd/conf:/fluentd/etc
+
+networks:
+  internal_net:
+  dmz_net:
+  external_net:
